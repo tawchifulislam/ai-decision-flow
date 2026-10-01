@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/button';
 import { DecisionNode } from './decision-node';
 import { NoEdge, YesEdge } from './edges';
 import type { DecisionNode as DecisionNodeType } from '@/lib/types';
+import { RunPanel } from './run-panel';
 
 const nodeTypes = { decision: DecisionNode };
 const edgeTypes = { yes: YesEdge, no: NoEdge };
@@ -165,6 +166,9 @@ export default function FlowEditor() {
         <Button variant="outline" onClick={resetGraph}>
           Reset
         </Button>
+      </Panel>
+      <Panel position="top-right">
+        <RunPanel nodes={nodes} edges={edges} />
       </Panel>
     </ReactFlow>
   );
