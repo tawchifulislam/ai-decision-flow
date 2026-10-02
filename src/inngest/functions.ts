@@ -1,3 +1,4 @@
+import { NonRetriableError } from 'inngest';
 import { inngest } from './client';
 import { decide } from '@/lib/decide';
 import {
@@ -74,8 +75,11 @@ export const runWorkflow = inngest.createFunction(
         `Stopped after ${MAX_STEPS} steps. The graph may contain a loop.`,
       );
     } catch (err) {
-      failRun(runId, err instanceof Error ? err.message : 'Unknown error');
-      throw err;
+      const message = err instanceof Error ? err.message : 'Unknown error';
+      failRun(runId, message);
+      throw new NonRetriableError(message, {
+        cause: err instanceof Error ? err : undefined,
+      });
     }
   },
 );

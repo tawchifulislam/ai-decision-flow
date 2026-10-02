@@ -10,7 +10,7 @@ function KindEdge(props: EdgeProps & { label: string; color: string }) {
       id={props.id}
       path={path}
       markerEnd={props.markerEnd}
-      style={{ stroke: props.color, strokeWidth: 2 }}
+      style={{ stroke: props.color, strokeWidth: 2, ...props.style }}
       labelX={labelX}
       labelY={labelY}
       label={props.label}

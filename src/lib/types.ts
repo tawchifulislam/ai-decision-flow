@@ -22,3 +22,9 @@ export type RunState = {
   steps: StepResult[];
   error?: string;
 };
+export type NodeStatus = 'idle' | 'running' | 'yes' | 'no' | 'failed';
+
+export type NodeVisual = {
+  status: NodeStatus;
+  order?: number;
+};

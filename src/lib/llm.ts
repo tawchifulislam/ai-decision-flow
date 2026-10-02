@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
 
 export const llm = new OpenAI({
-  apiKey: process.env.GEMINI_API_KEY,
+  apiKey: process.env.GEMINI_API_KEY || 'missing-key',
   baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
 });

@@ -9,9 +9,10 @@ import type { DecisionNode, RunState } from '@/lib/types';
 type Props = {
   nodes: DecisionNode[];
   edges: Edge[];
+  onRunChange: (run: RunState | null) => void;
 };
 
-export function RunPanel({ nodes, edges }: Props) {
+export function RunPanel({ nodes, edges, onRunChange }: Props) {
   const [input, setInput] = useState('');
   const [runId, setRunId] = useState<string | null>(null);
   const [run, setRun] = useState<RunState | null>(null);
@@ -31,6 +32,7 @@ export function RunPanel({ nodes, edges }: Props) {
         const data: RunState = await res.json();
         if (stopped) return;
         setRun(data);
+        onRunChange(data);
         if (data.status !== 'running') clearInterval(timer);
       } catch (e) {
         if (stopped) return;
@@ -46,12 +48,27 @@ export function RunPanel({ nodes, edges }: Props) {
       stopped = true;
       clearInterval(timer);
     };
-  }, [runId]);
+  }, [runId, onRunChange]);
 
   async function startRun() {
     setError(null);
+
+    // Check everything we can before spending an API call
+    if (!input.trim()) {
+      setError('Type an input to evaluate first.');
+      return;
+    }
+    const emptyCount = nodes.filter(n => !n.data.prompt.trim()).length;
+    if (emptyCount > 0) {
+      setError(
+        `${emptyCount} node(s) have an empty prompt. Fill them in or delete them.`,
+      );
+      return;
+    }
+
     setRun(null);
     setRunId(null);
+    onRunChange(null);
     setStarting(true);
     try {
       const res = await fetch('/api/run', {
@@ -126,7 +143,9 @@ export function RunPanel({ nodes, edges }: Props) {
           </ol>
 
           {run.status === 'failed' && (
-            <p className="text-xs text-red-600">Failed: {run.error}</p>
+            <p className="rounded bg-orange-50 p-2 text-xs text-orange-700">
+              Failed: {run.error}
+            </p>
           )}
         </div>
       )}
